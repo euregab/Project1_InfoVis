@@ -28,9 +28,14 @@ let svg = d3.select("body")
 let chart = svg.append("g")
     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-let outRadius = Math.min(width, height) / 2 - margin;
-let inRadius = outRadius/10;
+let outRadius = Math.min(width, height) / 2 - margin; //raggio esterno del piechart
+let inRadius = outRadius/10; //raggio interno, rende la torta una ciambella, per gusto estetico
 
+/*
+La funzione pie() fa parte di D3,
+mappa automaticamente i valori di un array su uno spazio angolare
+in modo che la somma totale degli angoli sia 360
+*/
 let pie = d3.pie()
     .value((d)=>d.popolazione)
     .sort((a,b)=>d3.ascending(a.id, b.id));
@@ -59,6 +64,11 @@ paths.enter()
     .style("stroke-width", "2px")
     .style("opacity", 0.7);
 
+
+/*
+Passare il mouse sopra uno spicchio ne esalta l'opacità,
+per evidenziarlo
+*/
 chart.selectAll("path").on("mouseover", function(d, i){
     d3.select(this).transition().style("opacity", 0.95);
     })
@@ -100,6 +110,12 @@ chart.selectAll("path")
     })
 */
 
+/*
+Implementazione dell'animazione su click.
+Scambia gli id dei valori relativi al path cliccato e a quello successivo,
+e successivamente riapplica la funzione pie() sull'array di valori
+in modo che i due "spicchi" in questione siano scambiati con un'animazione.
+*/
 chart.selectAll("path")
     .on("click", function(d,i){
         let prevId = parseInt(this.id.substring(4));
